@@ -3,8 +3,10 @@ import {Text, View, StyleSheet, Image, TouchableOpacity} from 'react-native';
 import {Button, CardSection, UserInfo} from "./common";
 import {Actions} from 'react-native-router-flux';
 import ImagePicker from 'react-native-image-picker';
+import {connect} from "react-redux";
+import {profileUpdate} from "../actions";
 
-export default class UserDetails extends React.Component {
+class UserDetails extends React.Component {
     onVideoButtonClick() {
         Actions.video();
     }
@@ -24,7 +26,6 @@ export default class UserDetails extends React.Component {
         };
         ImagePicker.showImagePicker(options, (response) => {
             console.log('Response = ', response);
-
             if (response.didCancel) {
                 console.log('User cancelled photo picker');
             }
@@ -36,13 +37,12 @@ export default class UserDetails extends React.Component {
             }
             else {
                 let source = {uri: response.uri};
-
                 // You can also display the image using data:
                 // let source = { uri: 'data:image/jpeg;base64,' + response.data };
-
+                console.log(source);
                 this.setState({
 
-                    ImageSource: source
+                    ImageSource: response.uri
 
                 });
             }
@@ -55,7 +55,7 @@ export default class UserDetails extends React.Component {
                 <View style={styles.imageContainer}>
                     <Image source={{uri: this.state.ImageSource}}
                            style={styles.smallThumbnail}/>
-                    <TouchableOpacity onPress={() => this.selectPhotoTapped.bind(this)}>
+                    <TouchableOpacity onPress={() => this.selectPhotoTapped()}>
                         <Text style={{color: 'white'}}>
                             Edit
                         </Text>
@@ -66,6 +66,8 @@ export default class UserDetails extends React.Component {
                         <UserInfo
                             headingText="Name"
                             placeholder='Name'
+                            // value={this.props.name}
+                            // onChangeText={(text) => this.props.profileUpdate({prop: 'name', value: text})}
                         />
                     </CardSection>
 
@@ -73,6 +75,8 @@ export default class UserDetails extends React.Component {
                         <UserInfo
                             headingText="Age"
                             placeholder='24'
+                            // value={this.props.age}
+                            // onChangeText={text => this.props.profileUpdate({prop: 'age', value: text})}
                         />
                     </CardSection>
 
@@ -80,6 +84,8 @@ export default class UserDetails extends React.Component {
                         <UserInfo
                             headingText="Hobbies"
                             placeholder='Hobbies'
+                            // value={this.props.hobbies}
+                            // onChangeText={text => this.props.profileUpdate({prop: 'hobbies', value: text})}
                         />
                     </CardSection>
 
@@ -87,6 +93,8 @@ export default class UserDetails extends React.Component {
                         <UserInfo
                             headingText="Description"
                             placeholder='Bio'
+                            // value={this.props.description}
+                            // onChangeText={text => this.props.profileUpdate({prop: 'desc', value: text})}
                         />
                     </CardSection>
                 </View>
@@ -100,26 +108,34 @@ export default class UserDetails extends React.Component {
     }
 }
 
-const
-    styles = StyleSheet.create({
-        container: {
-            flex: 1
-        },
-        mainContainer: {
-            flex: 1
-        },
-        imageContainer: {
-            height: 120,
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: '#03046d'
-        },
-        smallThumbnail: {
-            width: 70,
-            height: 70,
-            borderRadius: 35
-        },
-        cardSection: {
-            marginHorizontal: 0
-        }
-    })
+const styles = StyleSheet.create({
+    container: {
+        flex: 1
+    },
+    mainContainer: {
+        flex: 1
+    },
+    imageContainer: {
+        height: 120,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#03046d'
+    },
+    smallThumbnail: {
+        width: 70,
+        height: 70,
+        borderRadius: 35
+    },
+    cardSection: {
+        marginHorizontal: 0
+    }
+})
+
+
+const mapStateToProps = (state) => {
+    const {name, age, hobbies, description} = state.profile;
+    return {
+        name, age, hobbies, description
+    };
+};
+export default connect(mapStateToProps, {profileUpdate})(UserDetails);

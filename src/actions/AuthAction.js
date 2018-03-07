@@ -5,17 +5,15 @@ import {twitter} from "react-native-simple-auth";
 export const loginUser = () => {
     return (dispatch) => {
         dispatch({type: LOGIN_USER});
-        twitter({
-            appId: 'ZsdX6RfnqN9uwAwDAh79vlId7',
-            appSecret: 'CqblUE1JQZg8f8MQb9L8QJgqMjqlJtKU7Oqcq5iM8AnWjlDSGL',
-            callback: 'com.loginwithtwitter:/authorize',
-        }).then((info) => {
-            console.log("DATAAAASSSSSA" + info);
-            loginUserSuccess(dispatch, info);
-        }).catch((error) => {
-            console.log("EEEEEEEEEEEEEEEEEEEEEEEEEEE" + error);
-            loginUserFail(dispatch);
-        });
+        // twitter({
+        //     appId: 'ZsdX6RfnqN9uwAwDAh79vlId7',
+        //     appSecret: 'CqblUE1JQZg8f8MQb9L8QJgqMjqlJtKU7Oqcq5iM8AnWjlDSGL',
+        //     callback: 'com.loginwithtwitter:/authorize',
+        // }).then((info) => {
+        //     loginUserSuccess(dispatch, info);
+        // }).catch((error) => {
+        //     loginUserFail(dispatch, error);
+        // });
 
         //in emulator can't get data as it doesn't have twitter app installed on it
         //also it opens chrome browser instead of default in app that's why use dummy data for further operations
@@ -24,9 +22,10 @@ export const loginUser = () => {
     };
 };
 
-export const loginUserFail = (dispatch) => {
+export const loginUserFail = (dispatch, error) => {
     dispatch({
-        type: LOGIN_USER_FAIL
+        type: LOGIN_USER_FAIL,
+        payload: error
     })
 };
 
