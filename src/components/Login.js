@@ -1,31 +1,27 @@
 import React from 'react';
 import {View, StyleSheet, Image, Text} from 'react-native';
-import {Button, Card, CardSection, Input} from "./common";
-import {Actions} from 'react-native-router-flux';
-import {twitter} from 'react-native-simple-auth';
+import {Button, Card, CardSection, Input, Spinner} from "./common";
+import {connect} from 'react-redux'
+import {loginUser} from "../actions";
 
 class Login extends React.Component {
 
     onButtonPress() {
-        Actions.main();
-        twitter({
-            appId: 'ZsdX6RfnqN9uwAwDAh79vlId7',
-            appSecret: 'CqblUE1JQZg8f8MQb9L8QJgqMjqlJtKU7Oqcq5iM8AnWjlDSGL',
-            callback: 'com.loginwithtwitter:/authorize',
-        }).then((info) => {
-            console.log("DATAAAASSSSSA" + info);
-            alert(JSON.stringify(info));
-
-            // info.user - user details from the provider
-            // info.credentials - tokens from the provider
-        }).catch((error) => {
-            alert(JSON.stringify(error));
-            Actions.main();
-            console.log("EEEEEEEEEEEEEEEEEEEEEEEEEEE" + error);
-            // error.code
-            // error.description
-        });
+        this.props.loginUser();
     }
+
+    renderButton() {
+        if (this.props.loading) {
+            return <Spinner size='large'/>
+        }
+
+        return (
+            <Button onPress={this.onButtonPress.bind(this)}>
+                Login with Twitter
+            </Button>
+        )
+    }
+
 
     render() {
         return (
@@ -59,16 +55,12 @@ class Login extends React.Component {
                     </CardSection>
 
                     <CardSection>
-                        <Button onPress={this.onButtonPress.bind(this)}>
-                            Login
-                        </Button>
+                        {this.renderButton()}
                     </CardSection>
 
 
                     <CardSection style={{marginTop: 20, borderColor: 'transparent', backgroundColor: 'transparent'}}>
-                        <Button onPress={this.onButtonPress.bind(this)}>
-                            Login with Twitter
-                        </Button>
+                        {this.renderButton()}
                     </CardSection>
                 </View>
             </View>
@@ -108,5 +100,11 @@ const styles = StyleSheet.create({
 
 });
 
+const mapStateToProps = state => {
+    return {
+        error: state.auth.error,
+        loading: state.auth.loading
+    }
+}
 
-export default Login;
+export default connect(mapStateToProps, {loginUser})(Login);
